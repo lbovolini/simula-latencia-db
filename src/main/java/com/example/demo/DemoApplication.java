@@ -25,8 +25,17 @@ public class DemoApplication {
 			client.createProxy("mysql", "toxiproxy:19385", "demo-mysql:3306")
 					.toxics()
                 	.latency("mysql-latency-down", DOWNSTREAM, Integer.parseInt(time));
+			client.createProxy("sybase", "toxiproxy:25555", "demo-sybase:5000")
+					.toxics()
+					.latency("sybase-latency-down", DOWNSTREAM, Integer.parseInt(time));
 		} catch (IOException e) {
 			e.printStackTrace();
+			try {
+				client.getProxy("mysql").delete();
+				client.getProxy("sybase").delete();
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
 		}
 	}
 

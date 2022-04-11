@@ -10,23 +10,17 @@ services:
     environment:
       SERVER_PORT: 8081
       APP_DB_HOSTNAME: toxiproxy
-      APP_DB_PORT: 19385
-      APP_DB_NAME: demo
-      APP_DB_USERNAME: demo
-      APP_DB_PASSWORD: demo
-      APP_CACHE_HOSTNAME: demo-redis
-      APP_CACHE_PORT: 6379
+      APP_DB_PORT: 25555
+      APP_DB_NAME: master
+      APP_DB_USERNAME: sa
+      APP_DB_PASSWORD: myPassword
       time: 200
     depends_on:
-      demo-mysql:
-        condition: service_healthy
-      demo-redis:
+      demo-sybase:
         condition: service_healthy
     restart: on-failure
     networks:
-      demo-network:
-        aliases:
-          - demo
+      - demo-network
 
   demo-mysql:
     image: mysql:8.0.28-debian
@@ -41,33 +35,26 @@ services:
       test: mysqladmin --user=$$MYSQL_USER --password=$$MYSQL_PASSWORD ping
       interval: 5s
     networks:
-      demo-network:
-        aliases:
-          - demo-mysql
+      - demo-network
 
-  demo-redis:
-    image: redis:6.2.6-bullseye
+  demo-sybase:
+    image: ingleivj/sybase16
     ports:
-      - "6379:6379"
-    volumes:
-      - mysql-volume:/var/lib/mysql
+      - "5000:5000"
     healthcheck:
-      test: redis-cli ping
+      test: /bin/bash -c "source /opt/sybase/SYBASE.sh; isql -U sa -P myPassword -S MYSYBASE -v"
       interval: 5s
     networks:
-      demo-network:
-        aliases:
-          - demo-redis
+      - demo-network
 
   toxiproxy:
     image: shopify/toxiproxy:2.1.4
     networks:
-      demo-network:
-        aliases:
-          - toxiproxy
+      - demo-network
     ports:
       - "8474:8474"
       - "19385:19385"
+      - "25555:25555"
 volumes:
   mysql-volume:
 

@@ -23,9 +23,9 @@ public class TesteRepository {
             System.out.println("TIME TOTAL 1 " + (System.nanoTime() - start)/1_000_000);
 
             var hasMore = statement.execute(
-                    "select * from hello where name = 'Java'; " +
-                    "select * from hello where name = 'JPA';" +
-                    "select * from hello where name = 'JDBC';");
+                    "select * from hello where name = 'Java' \n" +
+                    "select * from hello where name = 'JPA' \n" +
+                    "select * from hello where name = 'JDBC'");
 
             System.out.println("TIME TOTAL 2 " + (System.nanoTime() - start)/1_000_000);
             System.out.println("READ ONLY? " + TransactionSynchronizationManager.isCurrentTransactionReadOnly());
